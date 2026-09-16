@@ -8,7 +8,9 @@ RUN composer install \
     --no-dev \
     --no-interaction \
     --prefer-dist \
-    --optimize-autoloader
+    --optimize-autoloader \
+    --ignore-platform-req=ext-intl \
+    --ignore-platform-req=ext-mbstring
 
 
 FROM php:8.2-apache
