@@ -1,20 +1,20 @@
 <?php
 /** @var string $title */
-/** @var array<int, array{username: string, full_name: string, role: string}> $users */
+/** @var array<int, array<string, mixed>> $users */
 ?>
 
 <?= view('templates/header', ['title' => $title]) ?>
 
 <h1>User Accounts</h1>
 
-<p><b>STAFF</b></p>
+<p>User records retrieved from the MySQL database.</p>
 
 <table>
     <thead>
         <tr>
             <th>Username</th>
             <th>Full Name</th>
-            <th>Role</th>
+            <th>Created At</th>
         </tr>
     </thead>
 
@@ -23,7 +23,7 @@
             <tr>
                 <td><?= esc($user['username']) ?></td>
                 <td><?= esc($user['full_name']) ?></td>
-                <td><?= esc($user['role']) ?></td>
+                <td><?= esc($user['created_at']) ?></td>
             </tr>
         <?php endforeach ?>
     </tbody>
