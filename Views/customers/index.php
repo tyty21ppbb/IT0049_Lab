@@ -1,13 +1,13 @@
 <?php
 /** @var string $title */
-/** @var array<int, array{full_name: string, email: string, phone: string}> $customers */
+/** @var array<int, array<string, mixed>> $customers */
 ?>
 
 <?= view('templates/header', ['title' => $title]) ?>
 
 <h1>Customer Accounts</h1>
 
-<p><b>CUSTOMERS</b></p>
+<p>Customer records retrieved from the MySQL database.</p>
 
 <table>
     <thead>
