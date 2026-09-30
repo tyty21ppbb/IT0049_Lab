@@ -33,21 +33,25 @@ $RECYCLE.BIN/
 # KDE directory preferences
 .directory
 
-# Linux trash folder which might appear on any partition or disk
+# Linux trash folder
 .Trash-*
 
 #-------------------------
 # Environment Files
 #-------------------------
-# These should never be under version control,
-# as it poses a security risk.
+
+# Never commit environment variables or secrets.
 .env
+.env.*
+!.env.example
+
 .vagrant
 Vagrantfile
 
 #-------------------------
-# Temporary Files
+# CodeIgniter Writable Files
 #-------------------------
+
 /writable/cache/*
 !/writable/cache/index.html
 
@@ -66,8 +70,20 @@ Vagrantfile
 php_errors.log
 
 #-------------------------
-# User Guide Temp Files
+# Public User Uploads
 #-------------------------
+
+# Ignore uploaded avatars but preserve the directory.
+/public/uploads/avatars/*
+!/public/uploads/avatars/.gitkeep
+
+# Ignore the unused uploads placeholder.
+/public/uploads/placeholder.svg
+
+#-------------------------
+# User Guide Temporary Files
+#-------------------------
+
 /user_guide_src/build/*
 /user_guide_src/cilexer/build/*
 /user_guide_src/cilexer/dist/*
@@ -76,27 +92,31 @@ php_errors.log
 #-------------------------
 # Test Files
 #-------------------------
+
 /tests/coverage*
 
-# Don't save phpunit under version control.
+# Do not commit PHPUnit installation.
 /phpunit
+/results/
+/phpunit.xml
 
 #-------------------------
 # Composer
 #-------------------------
+
 vendor/
 
 #-------------------------
-# IDE / Development Files
+# IDE and Development Files
 #-------------------------
 
-# Modules Testing
+# Modules testing
 _modules/*
 
-# phpenv local config
+# phpenv local configuration
 .php-version
 
-# Jetbrains editors (PHPStorm, etc)
+# JetBrains editors
 .idea/
 *.iml
 
@@ -116,11 +136,10 @@ _modules/*
 *.stTheme.cache
 *.sublime-workspace
 *.sublime-project
+
+# PHP development tools
 .phpintel
 /api/
 
 # Visual Studio Code
 .vscode/
-
-/results/
-/phpunit.xml

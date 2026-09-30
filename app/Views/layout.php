@@ -23,11 +23,11 @@ $currentPath = service('uri')->getPath();
     >
 
     <title><?= esc($pageTitle) ?> | BINIPOS</title>
+<link
+    rel="stylesheet"
+    href="<?= base_url('css/style.css') ?>"
+>
 
-    <link
-        rel="stylesheet"
-        href="<?= base_url('css/style.css') ?>"
-    >
 </head>
 
 <body>
