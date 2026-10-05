@@ -4,8 +4,16 @@
 /** @var array<string, mixed> $user */
 /** @var array<string, string> $errors */
 
-$currentAvatar = ! empty($user['avatar'])
-    ? 'uploads/avatars/' . $user['avatar']
+$hasAvatar = ! empty($user['avatar'])
+    && is_file(
+        FCPATH
+        . 'uploads/avatars/'
+        . basename((string) $user['avatar'])
+    );
+
+$currentAvatar = $hasAvatar
+    ? 'uploads/avatars/'
+        . basename((string) $user['avatar'])
     : 'images/avatar-placeholder.svg';
 
 ?>
@@ -16,13 +24,15 @@ $currentAvatar = ! empty($user['avatar'])
 
 <div class="form-shell">
     <section class="form-intro">
-        <span class="eyebrow">User management</span>
+        <span class="eyebrow">
+            User management
+        </span>
 
         <h1>Edit User</h1>
 
         <p>
-            Update the user's account information and profile
-            picture.
+            Update the account information, optionally change the
+            password, or upload a new profile picture.
         </p>
 
         <a
@@ -35,7 +45,12 @@ $currentAvatar = ! empty($user['avatar'])
 
     <section class="form-card">
         <div class="form-card-heading">
-            <span class="step-icon">&#9998;</span>
+            <span
+                class="step-icon"
+                aria-hidden="true"
+            >
+                &#9998;
+            </span>
 
             <div>
                 <h2>User details</h2>
@@ -48,7 +63,9 @@ $currentAvatar = ! empty($user['avatar'])
 
         <?php if (! empty($errors)): ?>
             <div class="alert error" role="alert">
-                <strong>Please correct the following:</strong>
+                <strong>
+                    Please correct the following:
+                </strong>
 
                 <ul>
                     <?php foreach ($errors as $error): ?>
@@ -111,6 +128,42 @@ $currentAvatar = ! empty($user['avatar'])
                             $user['full_name']
                         )
                     ) ?>"
+                >
+            </div>
+
+            <div class="field">
+                <label for="password">
+                    New Password
+                </label>
+
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    minlength="8"
+                    maxlength="255"
+                    autocomplete="new-password"
+                >
+
+                <small>
+                    Leave blank to keep the current password.
+                    A new password must contain at least
+                    8 characters.
+                </small>
+            </div>
+
+            <div class="field">
+                <label for="password_confirm">
+                    Confirm New Password
+                </label>
+
+                <input
+                    id="password_confirm"
+                    name="password_confirm"
+                    type="password"
+                    minlength="8"
+                    maxlength="255"
+                    autocomplete="new-password"
                 >
             </div>
 

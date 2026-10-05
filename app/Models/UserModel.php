@@ -7,17 +7,17 @@ use CodeIgniter\Model;
 class UserModel extends Model
 {
     protected $table = 'users';
-
     protected $primaryKey = 'id';
 
     protected $returnType = 'array';
-
-    protected $useAutoIncrement = true;
+    protected $useSoftDeletes = false;
 
     protected $allowedFields = [
-        'username',
-        'full_name',
-        'avatar',
-        'created_at',
-    ];
+    'username',
+    'full_name',
+    'password',
+    'avatar',
+    'created_at',
+];
+    protected $useTimestamps = false;
 }

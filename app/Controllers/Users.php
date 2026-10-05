@@ -22,7 +22,7 @@ class Users extends BaseController
     public function new(): string
     {
         return view('users/new', [
-            'title' => 'New User',
+            'title'  => 'New User',
             'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
@@ -39,17 +39,42 @@ class Users extends BaseController
                 'required',
                 'max_length[100]',
             ],
+            'password' => [
+                'required',
+                'min_length[8]',
+                'max_length[255]',
+            ],
+            'password_confirm' => [
+                'required',
+                'matches[password]',
+            ],
         ];
 
         $messages = [
             'username' => [
                 'required' => 'Username is required.',
-                'max_length' => 'Username cannot exceed 50 characters.',
-                'is_unique' => 'That username is already in use.',
+                'max_length' =>
+                    'Username cannot exceed 50 characters.',
+                'is_unique' =>
+                    'That username is already in use.',
             ],
             'full_name' => [
                 'required' => 'Full name is required.',
-                'max_length' => 'Full name cannot exceed 100 characters.',
+                'max_length' =>
+                    'Full name cannot exceed 100 characters.',
+            ],
+            'password' => [
+                'required' => 'Password is required.',
+                'min_length' =>
+                    'Password must contain at least 8 characters.',
+                'max_length' =>
+                    'Password cannot exceed 255 characters.',
+            ],
+            'password_confirm' => [
+                'required' =>
+                    'Please confirm the password.',
+                'matches' =>
+                    'The password confirmation does not match.',
             ],
         ];
 
@@ -65,12 +90,20 @@ class Users extends BaseController
 
         $model = new UserModel();
 
+        $password = (string) $this->request->getPost(
+            'password'
+        );
+
         $model->insert([
             'username' => trim(
                 (string) $this->request->getPost('username')
             ),
             'full_name' => trim(
                 (string) $this->request->getPost('full_name')
+            ),
+            'password' => password_hash(
+                $password,
+                PASSWORD_DEFAULT
             ),
             'created_at' => date('Y-m-d H:i:s'),
         ]);
@@ -95,8 +128,8 @@ class Users extends BaseController
         }
 
         return view('users/edit', [
-            'title' => 'Edit User',
-            'user' => $user,
+            'title'  => 'Edit User',
+            'user'   => $user,
             'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
@@ -126,13 +159,46 @@ class Users extends BaseController
         $messages = [
             'username' => [
                 'required' => 'Username is required.',
-                'max_length' => 'Username cannot exceed 50 characters.',
+                'max_length' =>
+                    'Username cannot exceed 50 characters.',
             ],
             'full_name' => [
                 'required' => 'Full name is required.',
-                'max_length' => 'Full name cannot exceed 100 characters.',
+                'max_length' =>
+                    'Full name cannot exceed 100 characters.',
             ],
         ];
+
+        $newPassword = (string) $this->request->getPost(
+            'password'
+        );
+
+        // A password change is optional on the Edit User page.
+        if ($newPassword !== '') {
+            $rules['password'] = [
+                'min_length[8]',
+                'max_length[255]',
+            ];
+
+            $rules['password_confirm'] = [
+                'required',
+                'matches[password]',
+            ];
+
+            $messages['password'] = [
+                'min_length' =>
+                    'Password must contain at least 8 characters.',
+                'max_length' =>
+                    'Password cannot exceed 255 characters.',
+            ];
+
+            $messages['password_confirm'] = [
+                'required' =>
+                    'Please confirm the new password.',
+                'matches' =>
+                    'The password confirmation does not match.',
+            ];
+        }
 
         $avatar = $this->request->getFile('avatar');
 
@@ -149,11 +215,16 @@ class Users extends BaseController
             ];
 
             $messages['avatar'] = [
-                'uploaded' => 'Select an avatar to upload.',
-                'max_size' => 'The avatar must not exceed 2 MB.',
-                'is_image' => 'The uploaded file must be an image.',
-                'mime_in' => 'The avatar must be a JPG or PNG image.',
-                'ext_in' => 'The avatar must use a JPG or PNG extension.',
+                'uploaded' =>
+                    'Select an avatar to upload.',
+                'max_size' =>
+                    'The avatar must not exceed 2 MB.',
+                'is_image' =>
+                    'The uploaded file must be an image.',
+                'mime_in' =>
+                    'The avatar must be a JPG or PNG image.',
+                'ext_in' =>
+                    'The avatar must use a JPG or PNG extension.',
             ];
         }
 
@@ -171,6 +242,7 @@ class Users extends BaseController
             (string) $this->request->getPost('username')
         );
 
+        // Exclude the current user from the uniqueness check.
         $duplicate = $model
             ->where('username', $username)
             ->where('id !=', $id)
@@ -181,7 +253,8 @@ class Users extends BaseController
                 ->back()
                 ->withInput()
                 ->with('errors', [
-                    'username' => 'That username is already in use.',
+                    'username' =>
+                        'That username is already in use.',
                 ]);
         }
 
@@ -191,6 +264,17 @@ class Users extends BaseController
                 (string) $this->request->getPost('full_name')
             ),
         ];
+
+        // Only replace the stored hash when a new password
+        // was entered.
+        if ($newPassword !== '') {
+            $data['password'] = password_hash(
+                $newPassword,
+                PASSWORD_DEFAULT
+            );
+        }
+
+        $oldAvatar = $user['avatar'] ?? null;
 
         if (
             $avatar !== null
@@ -219,6 +303,22 @@ class Users extends BaseController
         }
 
         $model->update($id, $data);
+
+        // Delete the previous avatar only after the database
+        // update succeeds.
+        if (
+            isset($data['avatar'])
+            && ! empty($oldAvatar)
+            && $oldAvatar !== $data['avatar']
+        ) {
+            $oldAvatarPath = FCPATH
+                . 'uploads/avatars/'
+                . basename((string) $oldAvatar);
+
+            if (is_file($oldAvatarPath)) {
+                unlink($oldAvatarPath);
+            }
+        }
 
         return redirect()
             ->to(site_url('users'))

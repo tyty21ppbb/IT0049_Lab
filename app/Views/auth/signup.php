@@ -8,32 +8,32 @@
 <?= $this->extend('layout') ?>
 <?= $this->section('content') ?>
 
-<div class="form-shell">
+<div class="form-shell auth-shell">
     <section class="form-intro">
-        <span class="eyebrow">User management</span>
+        <span class="eyebrow">BINIPOS</span>
 
-        <h1>New User</h1>
+        <h1>Create Account</h1>
 
         <p>
-            Create a unique account for a member of your POS team.
-            The new user will use the password entered here to log in.
+            Enter your details and choose a secure password
+            for your new BINIPOS account.
         </p>
 
         <a
             class="back-link"
-            href="<?= site_url('users') ?>"
+            href="<?= site_url('login') ?>"
         >
-            &larr; Back to users
+            &larr; Already have an account? Log in
         </a>
     </section>
 
     <section class="form-card">
         <div class="form-card-heading">
-            <span class="step-icon">+</span>
+            <span class="step-icon">&#128100;</span>
 
             <div>
-                <h2>User details</h2>
-                <p>All fields are required.</p>
+                <h2>Sign Up</h2>
+                <p>Complete all required fields.</p>
             </div>
         </div>
 
@@ -51,8 +51,8 @@
 
         <form
             class="account-form"
+            action="<?= site_url('signup') ?>"
             method="post"
-            action="<?= site_url('users') ?>"
         >
             <?= csrf_field() ?>
 
@@ -68,7 +68,6 @@
                     maxlength="50"
                     required
                     autocomplete="username"
-                    placeholder="e.g. cashier03"
                     value="<?= esc(old('username')) ?>"
                 >
 
@@ -87,7 +86,6 @@
                     maxlength="100"
                     required
                     autocomplete="name"
-                    placeholder="e.g. Juan Dela Cruz"
                     value="<?= esc(old('full_name')) ?>"
                 >
             </div>
@@ -107,9 +105,7 @@
                     autocomplete="new-password"
                 >
 
-                <small>
-                    The password must contain at least 8 characters.
-                </small>
+                <small>Use at least 8 characters.</small>
             </div>
 
             <div class="field">
@@ -126,20 +122,18 @@
                     required
                     autocomplete="new-password"
                 >
-
-                <small>Enter the same password again.</small>
             </div>
 
             <div class="form-actions">
                 <a
                     class="button button-secondary"
-                    href="<?= site_url('users') ?>"
+                    href="<?= site_url('login') ?>"
                 >
-                    Cancel
+                    Back to Login
                 </a>
 
                 <button class="button" type="submit">
-                    Create User
+                    Create Account
                 </button>
             </div>
         </form>
